@@ -4,14 +4,16 @@ using InventarioAPI.Controllers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace InventarioAPI.Migrations
 {
     [DbContext(typeof(InventarioDBContext))]
-    partial class InventarioDBContextModelSnapshot : ModelSnapshot
+    [Migration("20190616033001_Proveedores_Clientes")]
+    partial class Proveedores_Clientes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -117,24 +119,6 @@ namespace InventarioAPI.Migrations
                     b.HasIndex("NumeroFactura");
 
                     b.ToTable("DetalleFactura");
-                });
-
-            modelBuilder.Entity("InventarioAPI.Entities.EmailCliente", b =>
-                {
-                    b.Property<int>("CodigoEmail")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Email")
-                        .IsRequired();
-
-                    b.Property<string>("Nit");
-
-                    b.HasKey("CodigoEmail");
-
-                    b.HasIndex("Nit");
-
-                    b.ToTable("EmailClientes");
                 });
 
             modelBuilder.Entity("InventarioAPI.Entities.EmailProveedor", b =>
@@ -253,46 +237,6 @@ namespace InventarioAPI.Migrations
                     b.ToTable("Proveedores");
                 });
 
-            modelBuilder.Entity("InventarioAPI.Entities.TelefonoCliente", b =>
-                {
-                    b.Property<int>("CodigoTelefono")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Descripcion");
-
-                    b.Property<string>("Nit");
-
-                    b.Property<string>("Numero")
-                        .IsRequired();
-
-                    b.HasKey("CodigoTelefono");
-
-                    b.HasIndex("Nit");
-
-                    b.ToTable("TelefonoClientes");
-                });
-
-            modelBuilder.Entity("InventarioAPI.Entities.TelefonoProveedor", b =>
-                {
-                    b.Property<int>("CodigoTelefono")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("CodigoProveedor");
-
-                    b.Property<string>("Descripcion");
-
-                    b.Property<string>("Numero")
-                        .IsRequired();
-
-                    b.HasKey("CodigoTelefono");
-
-                    b.HasIndex("CodigoProveedor");
-
-                    b.ToTable("TelefonoProveedores");
-                });
-
             modelBuilder.Entity("InventarioAPI.Entities.TipoEmpaque", b =>
                 {
                     b.Property<int>("CodigoEmpaque")
@@ -341,13 +285,6 @@ namespace InventarioAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("InventarioAPI.Entities.EmailCliente", b =>
-                {
-                    b.HasOne("InventarioAPI.Entities.Cliente", "Cliente")
-                        .WithMany("EmailClientes")
-                        .HasForeignKey("Nit");
-                });
-
             modelBuilder.Entity("InventarioAPI.Entities.EmailProveedor", b =>
                 {
                     b.HasOne("InventarioAPI.Entities.Proveedor")
@@ -382,21 +319,6 @@ namespace InventarioAPI.Migrations
                     b.HasOne("InventarioAPI.Entities.TipoEmpaque", "TipoEmpaques")
                         .WithMany("Productos")
                         .HasForeignKey("CodigoEmpaque")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("InventarioAPI.Entities.TelefonoCliente", b =>
-                {
-                    b.HasOne("InventarioAPI.Entities.Cliente", "Cliente")
-                        .WithMany("TelefonoClientes")
-                        .HasForeignKey("Nit");
-                });
-
-            modelBuilder.Entity("InventarioAPI.Entities.TelefonoProveedor", b =>
-                {
-                    b.HasOne("InventarioAPI.Entities.Proveedor", "Proveedor")
-                        .WithMany("TelefonoProveedores")
-                        .HasForeignKey("CodigoProveedor")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618

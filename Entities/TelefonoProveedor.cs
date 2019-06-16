@@ -6,11 +6,13 @@ using System.Threading.Tasks;
 
 namespace InventarioAPI.Entities
 {
-    public class TipoEmpaque
+    public class TelefonoProveedor
     {
-        public int CodigoEmpaque { get; set; }
+        public int CodigoTelefono { get; set; }
         [Required]
+        public string Numero { get; set; }
         public string Descripcion { get; set; }
-        public List<Producto> Productos { get; set; }
+        public int CodigoProveedor { get; set; }
+        public Proveedor Proveedor { get; set; }
     }
 }

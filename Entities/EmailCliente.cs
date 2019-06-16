@@ -6,11 +6,12 @@ using System.Threading.Tasks;
 
 namespace InventarioAPI.Entities
 {
-    public class TipoEmpaque
+    public class EmailCliente
     {
-        public int CodigoEmpaque { get; set; }
+        public int CodigoEmail { get; set; }
         [Required]
-        public string Descripcion { get; set; }
-        public List<Producto> Productos { get; set; }
+        public string Email { get; set; }
+        public string Nit { get; set; }
+        public Cliente Cliente { get; set; }
     }
 }

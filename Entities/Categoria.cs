@@ -12,5 +12,6 @@ namespace InventarioAPI.Entities
         public int CodigoCategoria { get; set; }
         [Required]
         public string Descripcion { get; set; } 
+        public List<Producto> Productos { get; set; }
     }
 }
