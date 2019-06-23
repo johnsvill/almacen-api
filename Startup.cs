@@ -30,16 +30,22 @@ namespace InventarioAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            //Para declarar DTO
+            //Para declarar DTO's (cada uno)
             services.AddAutoMapper(options =>
             {
                 options.CreateMap<CategoriaCreacionDTO, Categoria>();
+                options.CreateMap<TipoEmpaqueCreacionDTO, TipoEmpaque>();
+                options.CreateMap<ClienteCreacionDTO, Cliente>();
+                options.CreateMap<ProveedorCreacionDTO, Proveedor>();
                 
             });
             //Enlazar contexto con el nombre de la cadena de conexión
             services.AddDbContext<InventarioDBContext>(options => 
                 options.UseSqlServer(Configuration.GetConnectionString("defaultConnection")));
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
+                .AddJsonOptions(options =>
+                    options.SerializerSettings.ReferenceLoopHandling
+                      = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

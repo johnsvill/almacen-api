@@ -1,12 +1,13 @@
-﻿using System;
+﻿using InventarioAPI.Entities;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace InventarioAPI.Entities
+namespace InventarioAPI.Models
 {
-    public class Proveedor
+    public class ProveedorDTO
     {
         public int CodigoProveedor { get; set; }
         [Required]
@@ -20,3 +21,4 @@ namespace InventarioAPI.Entities
         public List<TelefonoProveedor> TelefonoProveedores { get; set; }
     }
 }
+
