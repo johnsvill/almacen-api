@@ -32,6 +32,7 @@ namespace InventarioAPI.Controllers
             return TipoEmpaquesDTO; 
         }
 
+        //Método Asíncrono
         [HttpGet("{id}", Name = "GetTipoEmpaque")]
         public async Task<ActionResult<TipoEmpaqueDTO>> Get(int id)
         {
@@ -44,6 +45,7 @@ namespace InventarioAPI.Controllers
             return tipoEmpaquesDTO;
         }
 
+        //Método Asíncrono
         [HttpPost]
         public async Task<ActionResult> Post([FromBody] TipoEmpaqueCreacionDTO tipoEmpaqueCreacion)//Se espera recibir un JSON o un DOC.XML
         {
@@ -54,6 +56,7 @@ namespace InventarioAPI.Controllers
             return new CreatedAtRouteResult("GetTipoEmpaque", new { id = tipoEmpaques.CodigoEmpaque }, tipoEmpaquesDTO);
         }
 
+        //Método Asíncrono
         [HttpPut("{id}")]
         public async Task<ActionResult> Put(int id, [FromBody] TipoEmpaqueCreacionDTO tipoEmpaqueActualizacion)
         {
@@ -64,6 +67,7 @@ namespace InventarioAPI.Controllers
             return NoContent();
         }
 
+        //Método Asíncrono
         [HttpDelete("{id}")]
         public async Task<ActionResult<TipoEmpaqueDTO>> Delete(int id)
         {

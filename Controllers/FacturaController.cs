@@ -32,6 +32,7 @@ namespace InventarioAPI.Controllers
             return facturasDTO;
         }
 
+        //Método Asíncrono
         [HttpGet("{id}", Name = "GetFactura")]
         public async Task<ActionResult<FacturaDTO>> Get(int id)
         {
@@ -44,6 +45,7 @@ namespace InventarioAPI.Controllers
             return facturaDTO;
         }
 
+        //Método Asíncrono
         [HttpPost]
         public async Task<ActionResult> Post([FromBody] FacturaCreacionDTO facturaCreacion)//Se espera recibir un JSON o un DOC.XML
         {
@@ -54,6 +56,7 @@ namespace InventarioAPI.Controllers
             return new CreatedAtRouteResult("GetFactura", new { id = factura.NumeroFactura }, facturaDTO);
         }
 
+        //Método Asíncrono
         [HttpPut("{id}")]
         public async Task<ActionResult> Put(int id, [FromBody] FacturaCreacionDTO facturaActualizacion)
         {
@@ -64,6 +67,7 @@ namespace InventarioAPI.Controllers
             return NoContent();
         }
 
+        //Método Asíncrono
         [HttpDelete("{id}")]
         public async Task<ActionResult<FacturaDTO>> Delete(int id)
         {

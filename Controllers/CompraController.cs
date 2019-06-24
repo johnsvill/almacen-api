@@ -32,6 +32,7 @@ namespace InventarioAPI.Controllers
             return compraDTO;
         }
 
+        //Método Asíncrono
         [HttpGet("{id}", Name = "GetCompra")]
         public async Task<ActionResult<CompraDTO>> Get(int id)
         {
@@ -44,6 +45,7 @@ namespace InventarioAPI.Controllers
             return compraDTO;
         }
 
+        //Método Asíncrono
         [HttpPost]
         public async Task<ActionResult> Post([FromBody] CompraCreacionDTO compraCreacion)//Se espera recibir un JSON o un DOC.XML
         {
@@ -54,6 +56,7 @@ namespace InventarioAPI.Controllers
             return new CreatedAtRouteResult("GetCompra", new { id = compra.IdCompra }, compraDTO);
         }
 
+        //Método Asíncrono
         [HttpPut("{id}")]
         public async Task<ActionResult> Put(int id, [FromBody] CompraCreacionDTO compraActualizacion)
         {
@@ -64,6 +67,7 @@ namespace InventarioAPI.Controllers
             return NoContent();
         }
 
+        //Método Asíncrono
         [HttpDelete("{id}")]
         public async Task<ActionResult<CompraDTO>> Delete(int id)
         {

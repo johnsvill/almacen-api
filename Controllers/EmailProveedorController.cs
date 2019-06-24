@@ -32,6 +32,7 @@ namespace InventarioAPI.Controllers
             return emailProveedorDTO;
         }
 
+        //Método Asíncrono
         [HttpGet("{id}", Name = "GetEmailProveedor")]
         public async Task<ActionResult<CategoriaDTO>> Get(int id)
         {
@@ -44,6 +45,7 @@ namespace InventarioAPI.Controllers
             return emailProveedorDTO;
         }
 
+        //Método Asíncrono
         [HttpPost]
         public async Task<ActionResult> Post([FromBody] EmailProveedorCreacionDTO emailProveedorCreacion)//Se espera recibir un JSON o un DOC.XML
         {
@@ -54,6 +56,7 @@ namespace InventarioAPI.Controllers
             return new CreatedAtRouteResult("GetEmailProveedor", new { id = emailProveedor.CodigoEmail }, emailProveedorDTO);
         }
 
+        //Método Asíncrono
         [HttpPut("{id}")]
         public async Task<ActionResult> Put(int id, [FromBody] EmailProveedorCreacionDTO emailProveedorActualizacion)
         {
@@ -64,6 +67,7 @@ namespace InventarioAPI.Controllers
             return NoContent();
         }
 
+        //Método Asíncrono
         [HttpDelete("{id}")]
         public async Task<ActionResult<EmailProveedorDTO>> Delete(int id)
         {

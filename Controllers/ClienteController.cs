@@ -23,7 +23,7 @@ namespace InventarioAPI.Controllers
             this.contexto = contexto;
             this.mapper = mapper;
         }
-        //Métodos Asíncronos
+        //Método Asíncrono
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ClienteDTO>>> Get()
         {
@@ -32,6 +32,7 @@ namespace InventarioAPI.Controllers
             return clientesDTO;
         }
 
+        //Método Asíncrono
         [HttpGet("{id}", Name ="GetCliente")]
         public async Task<ActionResult<ClienteDTO>> Get(string id)
         {
@@ -44,6 +45,7 @@ namespace InventarioAPI.Controllers
             return clienteDTO;
         }
 
+        //Método Asíncrono
         [HttpPost]
         public async Task<ActionResult> Post([FromBody] ClienteCreacionDTO clienteCreacion)//Se espera recibir un JSON o un DOC.XML
         {
@@ -54,6 +56,7 @@ namespace InventarioAPI.Controllers
             return new CreatedAtRouteResult("GetCliente", new { id = cliente.Nit }, clienteDTO);
         }
 
+        //Método Asíncrono
         [HttpPut("{id}")]
         public async Task<ActionResult> Put(string id, [FromBody] ClienteCreacionDTO clienteActualizacion)
         {
@@ -64,6 +67,7 @@ namespace InventarioAPI.Controllers
             return NoContent();
         }
 
+        //Método Asíncrono
         [HttpDelete("{id}")]
         public async Task<ActionResult<ClienteDTO>> Delete(string id)
         {

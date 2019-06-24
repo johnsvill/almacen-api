@@ -32,6 +32,7 @@ namespace InventarioAPI.Controllers
             return telefonoProvDTO;
         }
 
+        //Método Asíncrono
         [HttpGet("{id}", Name = "GetTelefonoProveedor")]
         public async Task<ActionResult<TelefonoProveedorDTO>> Get(int id)
         {
@@ -44,6 +45,7 @@ namespace InventarioAPI.Controllers
             return telefonoProvDTO;
         }
 
+        //Método Asíncrono
         [HttpPost]
         public async Task<ActionResult> Post([FromBody] TelefonoProveedorCreacionDTO telefonoProvCreacion)//Se espera recibir un JSON o un DOC.XML
         {
@@ -54,6 +56,7 @@ namespace InventarioAPI.Controllers
             return new CreatedAtRouteResult("GetTelefonoProveedor", new { id = telefonoProv.CodigoTelefono }, telefonoProvDTO);
         }
 
+        //Método Asíncrono
         [HttpPut("{id}")]
         public async Task<ActionResult> Put(int id, [FromBody] TelefonoProveedorCreacionDTO telefonoProvActualizacion)
         {
@@ -64,6 +67,7 @@ namespace InventarioAPI.Controllers
             return NoContent();
         }
 
+        //Método Asíncrono
         [HttpDelete("{id}")]
         public async Task<ActionResult<TelefonoProveedorDTO>> Delete(int id)
         {
