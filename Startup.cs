@@ -37,6 +37,12 @@ namespace InventarioAPI
                 options.CreateMap<TipoEmpaqueCreacionDTO, TipoEmpaque>();
                 options.CreateMap<ClienteCreacionDTO, Cliente>();
                 options.CreateMap<ProveedorCreacionDTO, Proveedor>();
+                options.CreateMap<InventarioCreacionDTO, Inventario>();
+                options.CreateMap<ProductoCreacionDTO, Producto>();
+                options.CreateMap<DetalleFacturaCreacionDTO, DetalleFactura>();
+                options.CreateMap<DetalleCompraCreacionDTO, DetalleCompra>();
+                options.CreateMap<EmailProveedorCreacionDTO, EmailProveedor>();
+                options.CreateMap<CompraCreacionDTO, Compra>();
                 
             });
             //Enlazar contexto con el nombre de la cadena de conexión

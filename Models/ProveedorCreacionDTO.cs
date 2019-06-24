@@ -14,9 +14,6 @@ namespace InventarioAPI.Models
         public string RazonSocial { get; set; }
         public string Direccion { get; set; }
         public string PaginaWeb { get; set; }
-        public string ContactoPrincipal { get; set; }
-        public List<EmailProveedor> EmailProveedores { get; set; }
-        public List<Compra> Compras { get; set; }
-        public List<TelefonoProveedor> TelefonoProveedores { get; set; }
+        public string ContactoPrincipal { get; set; }   
     }
 }
