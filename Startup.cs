@@ -43,7 +43,10 @@ namespace InventarioAPI
                 options.CreateMap<DetalleCompraCreacionDTO, DetalleCompra>();
                 options.CreateMap<EmailProveedorCreacionDTO, EmailProveedor>();
                 options.CreateMap<CompraCreacionDTO, Compra>();
-                
+                options.CreateMap<FacturaCreacionDTO, Factura>();
+                options.CreateMap<TelefonoProveedorCreacionDTO, TelefonoProveedor>();
+                options.CreateMap<EmailClienteCreacionDTO, EmailCliente>();
+                options.CreateMap<TelefonoClienteCreacionDTO, TelefonoCliente>();                
             });
             //Enlazar contexto con el nombre de la cadena de conexión
             services.AddDbContext<InventarioDBContext>(options => 
