@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
+using InventarioAPI.Contexts;
 using InventarioAPI.Controllers;
 using InventarioAPI.Entities;
 using InventarioAPI.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -15,6 +18,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 
 namespace InventarioAPI
 {
@@ -48,9 +52,24 @@ namespace InventarioAPI
                 options.CreateMap<EmailClienteCreacionDTO, EmailCliente>();
                 options.CreateMap<TelefonoClienteCreacionDTO, TelefonoCliente>();                
             });
-            //Enlazar contexto con el nombre de la cadena de conexión
+            //Enlazar contexto con el nombre de la cadena de conexión (appsettings.json) (InventarioDBContext) Inventario_API
             services.AddDbContext<InventarioDBContext>(options => 
                 options.UseSqlServer(Configuration.GetConnectionString("defaultConnection")));
+            //Enlazar contexto con el nombre de la cadena de conexión (appsettings.json) (InventarioIdentityContext) User_DB
+            services.AddDbContext<InventarioIdentityContext>(options =>
+            options.UseSqlServer(Configuration.GetConnectionString("authConnection")));
+            //Tokens
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options => options.TokenValidationParameters
+                = new TokenValidationParameters {
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    ValidateLifetime = false,
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = 
+                         new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["jwt:key"])),
+                    ClockSkew = TimeSpan.Zero
+                });
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
                 .AddJsonOptions(options =>
                     options.SerializerSettings.ReferenceLoopHandling
@@ -70,6 +89,7 @@ namespace InventarioAPI
             }
 
             app.UseHttpsRedirection();
+            app.UseAuthentication();//Se deben autenticar todas las peticiones
             app.UseMvc();
         }
     }

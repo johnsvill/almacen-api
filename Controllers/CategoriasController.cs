@@ -27,7 +27,7 @@ namespace InventarioAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CategoriaDTO>>> Get()
         {
-            var categorias = await contexto.Categorias.ToListAsync();
+            var categorias = await contexto.Categorias.Include("Productos").ToListAsync();
             var categoriasDTO = mapper.Map<List<CategoriaDTO>>(categorias);
             return categoriasDTO;
         }
