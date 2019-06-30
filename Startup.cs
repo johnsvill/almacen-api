@@ -8,7 +8,7 @@ using InventarioAPI.Contexts;
 using InventarioAPI.Controllers;
 using InventarioAPI.Entities;
 using InventarioAPI.Models;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authentication.JwtBearer;//TOKENS JWT
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;

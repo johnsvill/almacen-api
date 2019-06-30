@@ -62,8 +62,8 @@ namespace InventarioAPI.Controllers
         {
             var tipoEmpaque = mapper.Map<TipoEmpaque>(tipoEmpaqueActualizacion);
             tipoEmpaque.CodigoEmpaque = id;
-            contexto.Entry(tipoEmpaque).State = EntityState.Modified;
-            await contexto.SaveChangesAsync();
+            this.contexto.Entry(tipoEmpaque).State = EntityState.Modified;
+            await this.contexto.SaveChangesAsync();
             return NoContent();
         }
 
@@ -71,14 +71,14 @@ namespace InventarioAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<TipoEmpaqueDTO>> Delete(int id)
         {
-            var codigoTipoEmpaque = await contexto.TipoEmpaques.Select(x => x.CodigoEmpaque)
+            var codigoTipoEmpaque = await this.contexto.TipoEmpaques.Select(x => x.CodigoEmpaque)
                 .FirstOrDefaultAsync(x => x == id);
             if(codigoTipoEmpaque == default(int))
             {
                 return NotFound();
             }
-            contexto.Remove(new TipoEmpaque { CodigoEmpaque = id });
-            await contexto.SaveChangesAsync();
+            this.contexto.Remove(new TipoEmpaque { CodigoEmpaque = id });
+            await this.contexto.SaveChangesAsync();
             return NoContent();
         }
     }

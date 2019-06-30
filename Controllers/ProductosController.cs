@@ -36,7 +36,9 @@ namespace InventarioAPI.Controllers
         [HttpGet("{id}", Name = "GetProducto")]
         public async Task<ActionResult<ProductoDTO>> Get(int id)//Se devuelve un objeto ProductoDTO
         {
-            var producto = await this.contexto.Productos.FirstOrDefaultAsync(x => x.CodigoProducto == id);
+            var producto = await this.contexto.Productos
+                .Include("Categoria").Include("TipoEmpaques")
+                .FirstOrDefaultAsync(x => x.CodigoProducto == id);
             if (producto == null)
             {
                 return NotFound();
