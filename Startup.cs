@@ -19,6 +19,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Identity;
 
 namespace InventarioAPI
 {
@@ -52,13 +53,21 @@ namespace InventarioAPI
                 options.CreateMap<EmailClienteCreacionDTO, EmailCliente>();
                 options.CreateMap<TelefonoClienteCreacionDTO, TelefonoCliente>();                
             });
+
             //Enlazar contexto con el nombre de la cadena de conexión (appsettings.json) (InventarioDBContext) Inventario_API
             services.AddDbContext<InventarioDBContext>(options => 
                 options.UseSqlServer(Configuration.GetConnectionString("defaultConnection")));
+
             //Enlazar contexto con el nombre de la cadena de conexión (appsettings.json) (InventarioIdentityContext) User_DB
             services.AddDbContext<InventarioIdentityContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("authConnection")));
-            //Tokens
+
+            //Para levantar servicios de autenticación
+            services.AddIdentity<ApplicationUser, IdentityRole>()
+            .AddEntityFrameworkStores<InventarioIdentityContext>()
+            .AddDefaultTokenProviders();
+
+            //Tokens            
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options => options.TokenValidationParameters
                 = new TokenValidationParameters {
@@ -67,7 +76,7 @@ namespace InventarioAPI
                     ValidateLifetime = false,
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = 
-                         new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["jwt:key"])),
+                         new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["jwt:key"])),//Va a traer un archivo de configuración "appsettings.json"
                     ClockSkew = TimeSpan.Zero
                 });
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
@@ -87,10 +96,10 @@ namespace InventarioAPI
             {
                 app.UseHsts();
             }
-
             app.UseHttpsRedirection();
             app.UseAuthentication();//Se deben autenticar todas las peticiones
-            app.UseMvc();
+            app.UseCors(builder => builder.WithOrigins("*").WithMethods("*").WithHeaders("*"));//Para quitar peticiones de origenes cruzados
+            app.UseMvc();         
         }
     }
 }

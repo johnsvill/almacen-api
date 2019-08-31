@@ -9,7 +9,7 @@ using InventarioAPI.Controllers;
 
 namespace InventarioAPI.Contexts 
 {
-    public class InventarioIdentityContext : IdentityDbContext<ApplicationUser>
+    public class InventarioIdentityContext : IdentityDbContext<ApplicationUser>//Hereda todas las propiedades de la BD
     {
         public InventarioIdentityContext(DbContextOptions<InventarioIdentityContext> options) 
             : base(options)

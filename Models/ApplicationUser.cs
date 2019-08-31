@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace InventarioAPI.Models
 {
-    public class ApplicationUser : IdentityUser
+    public class ApplicationUser : IdentityUser//Propiedades de la base de datos
     {
 
     }
