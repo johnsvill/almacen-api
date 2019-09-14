@@ -14,21 +14,21 @@ namespace InventarioAPI.Controllers
     [ApiController]
     public class TelefonoClienteController : ControllerBase
     {
-        private readonly InventarioDBContext contexto;
+        private readonly InventarioDBContext dBContext;
         private readonly IMapper mapper;
 
         //Inyección de dependencia
-        public TelefonoClienteController(InventarioDBContext contexto, IMapper mapper)
+        public TelefonoClienteController(InventarioDBContext dBContext, IMapper mapper)
         {
-            this.contexto = contexto;
+            this.dBContext = dBContext;
             this.mapper = mapper;
         }   
         //Método Asíncrono
         [HttpGet]
         public async Task<ActionResult<IEnumerable<TelefonoClienteDTO>>> Get()
         {
-            var telefonoCliente = await contexto.TelefonoClientes.ToListAsync();
-            var telefonoClienteDTO = mapper.Map<List<TelefonoClienteDTO>>(telefonoCliente);
+            var telefonoCliente = await this.dBContext.TelefonoClientes.ToListAsync();
+            var telefonoClienteDTO = this.mapper.Map<List<TelefonoClienteDTO>>(telefonoCliente);
             return telefonoClienteDTO;
         }
 
@@ -36,12 +36,12 @@ namespace InventarioAPI.Controllers
         [HttpGet("{id}", Name = "GetTelefonoCliente")]
         public async Task<ActionResult<TelefonoClienteDTO>> Get(int id)
         {
-            var telefonoCliente = await contexto.TelefonoClientes.FirstOrDefaultAsync(x => x.CodigoTelefono == id);
+            var telefonoCliente = await this.dBContext.TelefonoClientes.FirstOrDefaultAsync(x => x.CodigoTelefono == id);
             if (telefonoCliente == null)
             {
                 return NotFound();
             }
-            var telefonoClienteDTO = mapper.Map<TelefonoClienteDTO>(telefonoCliente);
+            var telefonoClienteDTO = this.mapper.Map<TelefonoClienteDTO>(telefonoCliente);
             return telefonoClienteDTO;
         }
 
@@ -49,10 +49,10 @@ namespace InventarioAPI.Controllers
         [HttpPost]
         public async Task<ActionResult> Post([FromBody] TelefonoClienteCreacionDTO telefonoClienteCreacion)//Se espera recibir un JSON o un DOC.XML
         {
-            var telefonoCliente = mapper.Map<TelefonoCliente>(telefonoClienteCreacion);
-            contexto.Add(telefonoCliente);
-            await contexto.SaveChangesAsync();
-            var telefonoClienteDTO = mapper.Map<TelefonoClienteDTO>(telefonoCliente);
+            var telefonoCliente = this.mapper.Map<TelefonoCliente>(telefonoClienteCreacion);
+            this.dBContext.Add(telefonoCliente);
+            await this.dBContext.SaveChangesAsync();
+            var telefonoClienteDTO = this.mapper.Map<TelefonoClienteDTO>(telefonoCliente);
             return new CreatedAtRouteResult("GetTelefonoCliente", new { id = telefonoCliente.CodigoTelefono }, telefonoClienteDTO);
         }
 
@@ -60,10 +60,10 @@ namespace InventarioAPI.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult> Put(int id, [FromBody] TelefonoClienteCreacionDTO telefonoClienteActualizacion)
         {
-            var telefonoCliente = mapper.Map<TelefonoCliente>(telefonoClienteActualizacion);
+            var telefonoCliente = this.mapper.Map<TelefonoCliente>(telefonoClienteActualizacion);
             telefonoCliente.CodigoTelefono = id;
-            contexto.Entry(telefonoCliente).State = EntityState.Modified;
-            await contexto.SaveChangesAsync();
+            this.dBContext.Entry(telefonoCliente).State = EntityState.Modified;
+            await this.dBContext.SaveChangesAsync();
             return NoContent();
         }
 
@@ -71,14 +71,14 @@ namespace InventarioAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<TelefonoClienteDTO>> Delete(int id)
         {
-            var telefonoCliente = await contexto.TelefonoClientes.Select(x => x.CodigoTelefono)
+            var telefonoCliente = await this.dBContext.TelefonoClientes.Select(x => x.CodigoTelefono)
                 .FirstOrDefaultAsync(x => x == id);
             if (telefonoCliente == default(int))
             {
                 return NotFound();
             }
-            contexto.Remove(new TelefonoCliente { CodigoTelefono = id });
-            await contexto.SaveChangesAsync();
+            this.dBContext.Remove(new TelefonoCliente { CodigoTelefono = id });
+            await this.dBContext.SaveChangesAsync();
             return NoContent();
         }
     }

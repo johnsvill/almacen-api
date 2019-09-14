@@ -14,21 +14,21 @@ namespace InventarioAPI.Controllers
     [ApiController]
     public class DetalleFacturaController : ControllerBase
     {
-        private readonly InventarioDBContext contexto;
+        private readonly InventarioDBContext dBContext;
         private readonly IMapper mapper;
 
         //Inyección de dependencia
-        public DetalleFacturaController(InventarioDBContext contexto, IMapper mapper)
+        public DetalleFacturaController(InventarioDBContext dBContext, IMapper mapper)
         {
-            this.contexto = contexto;
+            this.dBContext = dBContext;
             this.mapper = mapper;
         }
         //Método Asíncrono  
         [HttpGet]
         public async Task<ActionResult<IEnumerable<DetalleFacturaDTO>>> Get()
         {
-            var detalleFactura = await contexto.Categorias.ToListAsync();
-            var detalleFacturaDTO = mapper.Map<List<DetalleFacturaDTO>>(detalleFactura);
+            var detalleFactura = await this.dBContext.Categorias.ToListAsync();
+            var detalleFacturaDTO = this.mapper.Map<List<DetalleFacturaDTO>>(detalleFactura);
             return detalleFacturaDTO;
         }
 
@@ -36,12 +36,12 @@ namespace InventarioAPI.Controllers
         [HttpGet("{id}", Name = "GetDetalleFactura")]
         public async Task<ActionResult<DetalleFacturaDTO>> Get(int id)
         {
-            var detalleFactura = await contexto.DetalleFacturas.FirstOrDefaultAsync(x => x.CodigoDetalle == id);
+            var detalleFactura = await this.dBContext.DetalleFacturas.FirstOrDefaultAsync(x => x.CodigoDetalle == id);
             if (detalleFactura == null)
             {
                 return NotFound();
             }
-            var detalleFacturaDTO = mapper.Map<DetalleFacturaDTO>(detalleFactura);
+            var detalleFacturaDTO = this.mapper.Map<DetalleFacturaDTO>(detalleFactura);
             return detalleFacturaDTO;
         }
 
@@ -49,10 +49,10 @@ namespace InventarioAPI.Controllers
         [HttpPost]
         public async Task<ActionResult> Post([FromBody] DetalleFacturaCreacionDTO detalleFacturaCreacion)//Se espera recibir un JSON o un DOC.XML
         {
-            var detalleFactura = mapper.Map<DetalleFactura>(detalleFacturaCreacion);
-            contexto.Add(detalleFactura);
-            await contexto.SaveChangesAsync();
-            var detalleFacturaDTO = mapper.Map<DetalleFacturaDTO>(detalleFactura);
+            var detalleFactura = this.mapper.Map<DetalleFactura>(detalleFacturaCreacion);
+            this.dBContext.Add(detalleFactura);
+            await this.dBContext.SaveChangesAsync();
+            var detalleFacturaDTO = this.mapper.Map<DetalleFacturaDTO>(detalleFactura);
             return new CreatedAtRouteResult("GetDetalleFactura", new { id = detalleFactura.CodigoDetalle }, detalleFacturaDTO);
         }
 
@@ -60,10 +60,10 @@ namespace InventarioAPI.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult> Put(int id, [FromBody] DetalleFacturaCreacionDTO detalleFacturaActualizacion)
         {
-            var detalleFactura = mapper.Map<DetalleFactura>(detalleFacturaActualizacion);
+            var detalleFactura = this.mapper.Map<DetalleFactura>(detalleFacturaActualizacion);
             detalleFactura.CodigoDetalle = id;
-            contexto.Entry(detalleFactura).State = EntityState.Modified;
-            await contexto.SaveChangesAsync();
+            this.dBContext.Entry(detalleFactura).State = EntityState.Modified;
+            await this.dBContext.SaveChangesAsync();
             return NoContent();
         }
 
@@ -71,14 +71,14 @@ namespace InventarioAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<DetalleFacturaDTO>> Delete(int id)
         {
-            var detalleFactura = await contexto.DetalleFacturas.Select(x => x.CodigoDetalle)
+            var detalleFactura = await this.dBContext.DetalleFacturas.Select(x => x.CodigoDetalle)
                 .FirstOrDefaultAsync(x => x == id);
             if (detalleFactura == default(int))
             {
                 return NotFound();
             }
-            contexto.Remove(new DetalleFactura { CodigoDetalle = id });
-            await contexto.SaveChangesAsync();
+            this.dBContext.Remove(new DetalleFactura { CodigoDetalle = id });
+            await this.dBContext.SaveChangesAsync();
             return NoContent();
         }
     }

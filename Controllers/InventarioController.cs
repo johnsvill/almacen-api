@@ -14,21 +14,21 @@ namespace InventarioAPI.Controllers
     [ApiController]
     public class InventarioController : ControllerBase
     {
-        private readonly InventarioDBContext contexto;
+        private readonly InventarioDBContext dBContext;
         private readonly IMapper mapper;
 
         //Inyección de dependencia
-        public InventarioController(InventarioDBContext contexto, IMapper mapper)
+        public InventarioController(InventarioDBContext dBContext, IMapper mapper)
         {
-            this.contexto = contexto;
+            this.dBContext = dBContext;
             this.mapper = mapper;
         }
         //Método Asíncrono
         [HttpGet]
         public async Task<ActionResult<IEnumerable<InventarioDTO>>> Get()
         {
-            var inventario = await contexto.Inventarios.ToListAsync();
-            var inventarioDTO = mapper.Map<List<InventarioDTO>>(inventario);
+            var inventario = await this.dBContext.Inventarios.ToListAsync();
+            var inventarioDTO = this.mapper.Map<List<InventarioDTO>>(inventario);
             return inventarioDTO;
         }
 
@@ -36,12 +36,12 @@ namespace InventarioAPI.Controllers
         [HttpGet("{id}", Name ="GetInventario")]
         public async Task<ActionResult<InventarioDTO>> Get(int id)
         {
-            var inventario = await contexto.Inventarios.FirstOrDefaultAsync(x => x.CodigoInventario == id);
+            var inventario = await this.dBContext.Inventarios.FirstOrDefaultAsync(x => x.CodigoInventario == id);
             if(inventario == null)
             {
                 return NotFound();
             }
-            var inventarioDTO = mapper.Map<InventarioDTO>(inventario);
+            var inventarioDTO = this.mapper.Map<InventarioDTO>(inventario);
             return inventarioDTO;
         }
 
@@ -49,10 +49,10 @@ namespace InventarioAPI.Controllers
         [HttpPost]
         public async Task<ActionResult> Post([FromBody] InventarioCreacionDTO inventarioCreacion)//SE espera recibir un JSON o un DOC.XML
         {
-            var inventario = mapper.Map<Inventario>(inventarioCreacion);
-            contexto.Add(inventario);
-            await contexto.SaveChangesAsync();
-            var inventarioDTO = mapper.Map<InventarioDTO>(inventario);
+            var inventario = this.mapper.Map<Inventario>(inventarioCreacion);
+            this.dBContext.Add(inventario);
+            await this.dBContext.SaveChangesAsync();
+            var inventarioDTO = this.mapper.Map<InventarioDTO>(inventario);
             return new CreatedAtRouteResult("GetInventario", new { id = inventario.CodigoInventario }, inventarioDTO);
         }
 
@@ -60,10 +60,10 @@ namespace InventarioAPI.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult> Put(int id, [FromBody] InventarioCreacionDTO inventarioActualizacion)
         {
-            var inventario = mapper.Map<Inventario>(inventarioActualizacion);
+            var inventario = this.mapper.Map<Inventario>(inventarioActualizacion);
             inventario.CodigoInventario = id;
-            contexto.Entry(inventario).State = EntityState.Modified;
-            await contexto.SaveChangesAsync();
+            this.dBContext.Entry(inventario).State = EntityState.Modified;
+            await this.dBContext.SaveChangesAsync();
             return NoContent();
         }
 
@@ -71,14 +71,14 @@ namespace InventarioAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<InventarioDTO>> Delete(int id)
         {
-            var codigoInventario = await contexto.Inventarios.Select(x => x.CodigoInventario)
+            var codigoInventario = await this.dBContext.Inventarios.Select(x => x.CodigoInventario)
                 .FirstOrDefaultAsync(x => x == id);
             if (codigoInventario == default(int))
             {
                 return NotFound();
             }
-            contexto.Remove(new Inventario { CodigoInventario = id });
-            await contexto.SaveChangesAsync();
+            this.dBContext.Remove(new Inventario { CodigoInventario = id });
+            await this.dBContext.SaveChangesAsync();
             return NoContent();
         }
     }

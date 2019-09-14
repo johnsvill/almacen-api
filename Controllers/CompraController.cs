@@ -14,21 +14,21 @@ namespace InventarioAPI.Controllers
     [ApiController]
     public class CompraController : ControllerBase
     {
-        private readonly InventarioDBContext contexto;
+        private readonly InventarioDBContext dBContext;
         private readonly IMapper mapper;
 
         //Inyección de dependencia
-        public CompraController(InventarioDBContext contexto, IMapper mapper)
+        public CompraController(InventarioDBContext dBContext, IMapper mapper)
         {
-            this.contexto = contexto;
+            this.dBContext = dBContext;
             this.mapper = mapper;
         }   
         //Método Asíncrono
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CompraDTO>>> Get()
         {
-            var compra = await contexto.Categorias.ToListAsync();
-            var compraDTO = mapper.Map<List<CompraDTO>>(compra);
+            var compra = await this.dBContext.Categorias.ToListAsync();
+            var compraDTO = this.mapper.Map<List<CompraDTO>>(compra);
             return compraDTO;
         }
 
@@ -36,12 +36,12 @@ namespace InventarioAPI.Controllers
         [HttpGet("{id}", Name = "GetCompra")]
         public async Task<ActionResult<CompraDTO>> Get(int id)
         {
-            var compra = await contexto.Compras.FirstOrDefaultAsync(x => x.IdCompra == id);
+            var compra = await this.dBContext.Compras.FirstOrDefaultAsync(x => x.IdCompra == id);
             if (compra == null)
             {
                 return NotFound();
             }
-            var compraDTO = mapper.Map<CompraDTO>(compra);
+            var compraDTO = this.mapper.Map<CompraDTO>(compra);
             return compraDTO;
         }
 
@@ -49,10 +49,10 @@ namespace InventarioAPI.Controllers
         [HttpPost]
         public async Task<ActionResult> Post([FromBody] CompraCreacionDTO compraCreacion)//Se espera recibir un JSON o un DOC.XML
         {
-            var compra = mapper.Map<Compra>(compraCreacion);
-            contexto.Add(compra);
-            await contexto.SaveChangesAsync();
-            var compraDTO = mapper.Map<CompraDTO>(compra);
+            var compra = this.mapper.Map<Compra>(compraCreacion);
+            this.dBContext.Add(compra);
+            await this.dBContext.SaveChangesAsync();
+            var compraDTO = this.mapper.Map<CompraDTO>(compra);
             return new CreatedAtRouteResult("GetCompra", new { id = compra.IdCompra }, compraDTO);
         }
 
@@ -60,10 +60,10 @@ namespace InventarioAPI.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult> Put(int id, [FromBody] CompraCreacionDTO compraActualizacion)
         {
-            var compra = mapper.Map<Compra>(compraActualizacion);
+            var compra = this.mapper.Map<Compra>(compraActualizacion);
             compra.IdCompra = id;
-            contexto.Entry(compra).State = EntityState.Modified;
-            await contexto.SaveChangesAsync();
+            this.dBContext.Entry(compra).State = EntityState.Modified;
+            await this.dBContext.SaveChangesAsync();
             return NoContent();
         }
 
@@ -71,14 +71,14 @@ namespace InventarioAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<CompraDTO>> Delete(int id)
         {
-            var compra = await contexto.Compras.Select(x => x.IdCompra)
+            var compra = await this.dBContext.Compras.Select(x => x.IdCompra)
                 .FirstOrDefaultAsync(x => x == id);
             if (compra == default(int))
             {
                 return NotFound();
             }
-            contexto.Remove(new Compra { IdCompra = id });
-            await contexto.SaveChangesAsync();
+            this.dBContext.Remove(new Compra { IdCompra = id });
+            await this.dBContext.SaveChangesAsync();
             return NoContent();
         }
     }

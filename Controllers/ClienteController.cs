@@ -14,21 +14,21 @@ namespace InventarioAPI.Controllers
     [ApiController]
     public class ClienteController : ControllerBase
     {
-        private readonly InventarioDBContext contexto;
+        private readonly InventarioDBContext dBContext;
         private readonly IMapper mapper;
 
         //Inyección de dependencia
-        public ClienteController(InventarioDBContext contexto, IMapper mapper)
+        public ClienteController(InventarioDBContext dBContext, IMapper mapper)
         {
-            this.contexto = contexto;
+            this.dBContext = dBContext;
             this.mapper = mapper;
         }
         //Método Asíncrono
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ClienteDTO>>> Get()
         {
-            var clientes = await contexto.Clientes.ToListAsync();
-            var clientesDTO = mapper.Map<List<ClienteDTO>>(clientes);
+            var clientes = await this.dBContext.Clientes.ToListAsync();
+            var clientesDTO = this.mapper.Map<List<ClienteDTO>>(clientes);
             return clientesDTO;
         }
 
@@ -36,12 +36,12 @@ namespace InventarioAPI.Controllers
         [HttpGet("{id}", Name ="GetCliente")]
         public async Task<ActionResult<ClienteDTO>> Get(string id)
         {
-            var clientes = await contexto.Clientes.FirstOrDefaultAsync(x => x.Nit == id);
+            var clientes = await this.dBContext.Clientes.FirstOrDefaultAsync(x => x.Nit == id);
             if(clientes == null)
             {
                 return NotFound();
             }
-            var clienteDTO = mapper.Map<ClienteDTO>(clientes);
+            var clienteDTO = this.mapper.Map<ClienteDTO>(clientes);
             return clienteDTO;
         }
 
@@ -49,10 +49,10 @@ namespace InventarioAPI.Controllers
         [HttpPost]
         public async Task<ActionResult> Post([FromBody] ClienteCreacionDTO clienteCreacion)//Se espera recibir un JSON o un DOC.XML
         {
-            var cliente = mapper.Map<Cliente>(clienteCreacion);
-            contexto.Add(clienteCreacion);
-            await contexto.SaveChangesAsync();
-            var clienteDTO = mapper.Map<ClienteDTO>(cliente);
+            var cliente = this.mapper.Map<Cliente>(clienteCreacion);
+            this.dBContext.Add(clienteCreacion);
+            await this.dBContext.SaveChangesAsync();
+            var clienteDTO = this.mapper.Map<ClienteDTO>(cliente);
             return new CreatedAtRouteResult("GetCliente", new { id = cliente.Nit }, clienteDTO);
         }
 
@@ -60,10 +60,10 @@ namespace InventarioAPI.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult> Put(string id, [FromBody] ClienteCreacionDTO clienteActualizacion)
         {
-            var cliente = mapper.Map<Cliente>(clienteActualizacion);
+            var cliente = this.mapper.Map<Cliente>(clienteActualizacion);
             cliente.Nit = id;
-            contexto.Entry(cliente).State = EntityState.Modified;
-            await contexto.SaveChangesAsync();
+            this.dBContext.Entry(cliente).State = EntityState.Modified;
+            await this.dBContext.SaveChangesAsync();
             return NoContent();
         }
 
@@ -71,14 +71,14 @@ namespace InventarioAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<ClienteDTO>> Delete(string id)
         {
-            var codigoCliente = await contexto.Clientes.Select(x => x.Nit)
+            var codigoCliente = await this.dBContext.Clientes.Select(x => x.Nit)
                 .FirstOrDefaultAsync(x => x == id);
             if (codigoCliente == default(string))
             {
                 return NotFound();
             }
-            contexto.Remove(new Cliente { Nit = id });
-            await contexto.SaveChangesAsync();
+            this.dBContext.Remove(new Cliente { Nit = id });
+            await this.dBContext.SaveChangesAsync();
             return NoContent();
         }
     }

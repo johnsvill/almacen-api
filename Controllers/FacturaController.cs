@@ -14,21 +14,21 @@ namespace InventarioAPI.Controllers
     [ApiController]
     public class FacturaController : ControllerBase
     {
-        private readonly InventarioDBContext contexto;
+        private readonly InventarioDBContext dBContext;
         private readonly IMapper mapper;
 
         //Inyección de dependencia  
-        public FacturaController(InventarioDBContext contexto, IMapper mapper)
+        public FacturaController(InventarioDBContext dBContext, IMapper mapper)
         {
-            this.contexto = contexto;
+            this.dBContext = dBContext;
             this.mapper = mapper;
         }
         //Método Asíncrono
         [HttpGet]
         public async Task<ActionResult<IEnumerable<FacturaDTO>>> Get()
         {
-            var facturas = await contexto.Categorias.ToListAsync();
-            var facturasDTO = mapper.Map<List<FacturaDTO>>(facturas);
+            var facturas = await this.dBContext.Categorias.ToListAsync();
+            var facturasDTO = this.mapper.Map<List<FacturaDTO>>(facturas);
             return facturasDTO;
         }
 
@@ -36,12 +36,12 @@ namespace InventarioAPI.Controllers
         [HttpGet("{id}", Name = "GetFactura")]
         public async Task<ActionResult<FacturaDTO>> Get(int id)
         {
-            var factura = await contexto.Facturas.FirstOrDefaultAsync(x => x.NumeroFactura == id);
+            var factura = await this.dBContext.Facturas.FirstOrDefaultAsync(x => x.NumeroFactura == id);
             if (factura == null)
             {
                 return NotFound();
             }
-            var facturaDTO = mapper.Map<FacturaDTO>(factura);
+            var facturaDTO = this.mapper.Map<FacturaDTO>(factura);
             return facturaDTO;
         }
 
@@ -49,10 +49,10 @@ namespace InventarioAPI.Controllers
         [HttpPost]
         public async Task<ActionResult> Post([FromBody] FacturaCreacionDTO facturaCreacion)//Se espera recibir un JSON o un DOC.XML
         {
-            var factura = mapper.Map<Factura>(facturaCreacion);
-            contexto.Add(factura);
-            await contexto.SaveChangesAsync();
-            var facturaDTO = mapper.Map<FacturaDTO>(factura);
+            var factura = this.mapper.Map<Factura>(facturaCreacion);
+            this.dBContext.Add(factura);
+            await this.dBContext.SaveChangesAsync();
+            var facturaDTO = this.mapper.Map<FacturaDTO>(factura);
             return new CreatedAtRouteResult("GetFactura", new { id = factura.NumeroFactura }, facturaDTO);
         }
 
@@ -60,10 +60,10 @@ namespace InventarioAPI.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult> Put(int id, [FromBody] FacturaCreacionDTO facturaActualizacion)
         {
-            var factura = mapper.Map<Factura>(facturaActualizacion);
+            var factura = this.mapper.Map<Factura>(facturaActualizacion);
             factura.NumeroFactura = id;
-            contexto.Entry(factura).State = EntityState.Modified;
-            await contexto.SaveChangesAsync();
+            this.dBContext.Entry(factura).State = EntityState.Modified;
+            await this.dBContext.SaveChangesAsync();
             return NoContent();
         }
 
@@ -71,14 +71,14 @@ namespace InventarioAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<FacturaDTO>> Delete(int id)
         {
-            var codigoFactura = await contexto.Facturas.Select(x => x.NumeroFactura)
+            var codigoFactura = await this.dBContext.Facturas.Select(x => x.NumeroFactura)
                 .FirstOrDefaultAsync(x => x == id);
             if (codigoFactura == default(int))
             {
                 return NotFound();
             }
-            contexto.Remove(new Factura { NumeroFactura = id });
-            await contexto.SaveChangesAsync();
+            this.dBContext.Remove(new Factura { NumeroFactura = id });
+            await this.dBContext.SaveChangesAsync();
             return NoContent();
         }
     }  

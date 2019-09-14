@@ -14,21 +14,21 @@ namespace InventarioAPI.Controllers
     [ApiController]
     public class EmailClienteController : ControllerBase
     {
-        private readonly InventarioDBContext contexto;
+        private readonly InventarioDBContext dBContext;
         private readonly IMapper mapper;
 
         //Inyección de dependencia
-        public EmailClienteController(InventarioDBContext contexto, IMapper mapper)
+        public EmailClienteController(InventarioDBContext dBContext, IMapper mapper)
         {
-            this.contexto = contexto;
+            this.dBContext = dBContext;
             this.mapper = mapper;
         }
         //Método Asíncrono
         [HttpGet]
         public async Task<ActionResult<IEnumerable<EmailClienteDTO>>> Get()
         {
-            var emailCliente = await contexto.EmailClientes.ToListAsync();
-            var emailClienteDTO = mapper.Map<List<EmailClienteDTO>>(emailCliente);
+            var emailCliente = await this.dBContext.EmailClientes.ToListAsync();
+            var emailClienteDTO = this.mapper.Map<List<EmailClienteDTO>>(emailCliente);
             return emailClienteDTO;
         }
 
@@ -36,12 +36,12 @@ namespace InventarioAPI.Controllers
         [HttpGet("{id}", Name = "GetEmailCliente")]
         public async Task<ActionResult<EmailClienteDTO>> Get(int id)
         {
-            var emailCliente = await contexto.EmailClientes.FirstOrDefaultAsync(x => x.CodigoEmail == id);
+            var emailCliente = await this.dBContext.EmailClientes.FirstOrDefaultAsync(x => x.CodigoEmail == id);
             if (emailCliente == null)
             {
                 return NotFound();
             }
-            var emailClienteDTO = mapper.Map<EmailClienteDTO>(emailCliente);
+            var emailClienteDTO = this.mapper.Map<EmailClienteDTO>(emailCliente);
             return emailClienteDTO;
         }
 
@@ -49,10 +49,10 @@ namespace InventarioAPI.Controllers
         [HttpPost]
         public async Task<ActionResult> Post([FromBody] EmailClienteCreacionDTO emailClienteCreacion)//Se espera recibir un JSON o un DOC.XML
         {
-            var emailCliente = mapper.Map<EmailCliente>(emailClienteCreacion);
-            contexto.Add(emailCliente);
-            await contexto.SaveChangesAsync();
-            var emailClienteDTO = mapper.Map<EmailClienteDTO>(emailCliente);
+            var emailCliente = this.mapper.Map<EmailCliente>(emailClienteCreacion);
+            this.dBContext.Add(emailCliente);
+            await this.dBContext.SaveChangesAsync();
+            var emailClienteDTO = this.mapper.Map<EmailClienteDTO>(emailCliente);
             return new CreatedAtRouteResult("GetEmailCliente", new { id = emailCliente.CodigoEmail }, emailClienteDTO);
         }
 
@@ -60,10 +60,10 @@ namespace InventarioAPI.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult> Put(int id, [FromBody] EmailClienteCreacionDTO emailClienteActualizacion)
         {
-            var emailCliente = mapper.Map<EmailCliente>(emailClienteActualizacion);
+            var emailCliente = this.mapper.Map<EmailCliente>(emailClienteActualizacion);
             emailCliente.CodigoEmail = id;
-            contexto.Entry(emailCliente).State = EntityState.Modified;
-            await contexto.SaveChangesAsync();
+            this.dBContext.Entry(emailCliente).State = EntityState.Modified;
+            await this.dBContext.SaveChangesAsync();
             return NoContent();
         }
 
@@ -71,14 +71,14 @@ namespace InventarioAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<EmailClienteDTO>> Delete(int id)
         {
-            var CodigoEmailCliente = await contexto.EmailClientes.Select(x => x.CodigoEmail)
+            var CodigoEmailCliente = await this.dBContext.EmailClientes.Select(x => x.CodigoEmail)
                 .FirstOrDefaultAsync(x => x == id);
             if (CodigoEmailCliente == default(int))
             {
                 return NotFound();
             }
-            contexto.Remove(new EmailCliente { CodigoEmail = id });
-            await contexto.SaveChangesAsync();
+            this.dBContext.Remove(new EmailCliente { CodigoEmail = id });
+            await this.dBContext.SaveChangesAsync();
             return NoContent();
         }
     }

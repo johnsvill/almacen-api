@@ -14,21 +14,21 @@ namespace InventarioAPI.Controllers
     [ApiController]
     public class ProveedorController : ControllerBase
     {
-        private readonly InventarioDBContext contexto;
+        private readonly InventarioDBContext dBContext;
         private readonly IMapper mapper;
 
         //Inyección de dependencia
-        public ProveedorController (InventarioDBContext contexto, IMapper mapper)
+        public ProveedorController (InventarioDBContext dBContext, IMapper mapper)
         {
-            this.contexto = contexto;
+            this.dBContext = dBContext;
             this.mapper = mapper;
         }
         //Método Asíncrono
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ProveedorDTO>>> Get()
         {
-            var proveedores = await contexto.Proveedores.ToListAsync();
-            var proveedoresDTO = mapper.Map<List<ProveedorDTO>>(proveedores);
+            var proveedores = await this.dBContext.Proveedores.ToListAsync();
+            var proveedoresDTO = this.mapper.Map<List<ProveedorDTO>>(proveedores);
             return proveedoresDTO;
         }
 
@@ -36,12 +36,12 @@ namespace InventarioAPI.Controllers
         [HttpGet("{id}", Name = "GetProveedor")]
         public async Task<ActionResult<ProveedorDTO>> Get(int id)
         {
-            var proveedor = await contexto.Proveedores.FirstOrDefaultAsync(x => x.CodigoProveedor == id);
+            var proveedor = await this.dBContext.Proveedores.FirstOrDefaultAsync(x => x.CodigoProveedor == id);
             if (proveedor == null)
             {
                 return NotFound();
             }
-            var proveedoresDTO = mapper.Map<ProveedorDTO>(proveedor);
+            var proveedoresDTO = this.mapper.Map<ProveedorDTO>(proveedor);
             return proveedoresDTO;
         }
 
@@ -49,10 +49,10 @@ namespace InventarioAPI.Controllers
         [HttpPost]
         public async Task<ActionResult> Post([FromBody] ProveedorCreacionDTO proveedorCreacion)//Se espera recibir un JSON o un DOC.XML
         {
-            var proveedor = mapper.Map<Proveedor>(proveedorCreacion);
-            contexto.Add(proveedor);
-            await contexto.SaveChangesAsync();
-            var proveedorDTO = mapper.Map<ProveedorDTO>(proveedor);
+            var proveedor = this.mapper.Map<Proveedor>(proveedorCreacion);
+            this.dBContext.Add(proveedor);
+            await this.dBContext.SaveChangesAsync();
+            var proveedorDTO = this.mapper.Map<ProveedorDTO>(proveedor);
             return new CreatedAtRouteResult("GetProveedor", new { id = proveedor.CodigoProveedor }, proveedorDTO);
         }
 
@@ -60,10 +60,10 @@ namespace InventarioAPI.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult> Put(int id, [FromBody] ProveedorCreacionDTO proveedorActualizacion)
         {
-            var proveedor = mapper.Map<Proveedor>(proveedorActualizacion);
+            var proveedor = this.mapper.Map<Proveedor>(proveedorActualizacion);
             proveedor.CodigoProveedor = id;
-            contexto.Entry(proveedor).State = EntityState.Modified;
-            await contexto.SaveChangesAsync();
+            this.dBContext.Entry(proveedor).State = EntityState.Modified;
+            await this.dBContext.SaveChangesAsync();
             return NoContent();
         }
 
@@ -71,14 +71,14 @@ namespace InventarioAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)
         {
-            var codigoProveedor = await contexto.Proveedores.Select(x => x.CodigoProveedor)
+            var codigoProveedor = await this.dBContext.Proveedores.Select(x => x.CodigoProveedor)
                 .FirstOrDefaultAsync(x => x == id);
             if(codigoProveedor == default(int))
             {
                 return NotFound();
             }
-            contexto.Remove(new Proveedor { CodigoProveedor = id });
-            await contexto.SaveChangesAsync();
+            this.dBContext.Remove(new Proveedor { CodigoProveedor = id });
+            await this.dBContext.SaveChangesAsync();
             return NoContent();
         }
     }

@@ -14,21 +14,21 @@ namespace InventarioAPI.Controllers
     [ApiController]
     public class DetalleCompraController : ControllerBase
     {
-        private readonly InventarioDBContext contexto;
+        private readonly InventarioDBContext dBContext;
         private readonly IMapper mapper;
 
         //Inyección de dependencia
-        public DetalleCompraController(InventarioDBContext contexto, IMapper mapper)
+        public DetalleCompraController(InventarioDBContext dBContext, IMapper mapper)
         {
-            this.contexto = contexto;
+            this.dBContext = dBContext;
             this.mapper = mapper;   
         }
         //Método Asíncrono
         [HttpGet]
         public async Task<ActionResult<IEnumerable<DetalleCompraDTO>>> Get()
         {
-            var detalleCompras = await contexto.DetalleCompras.ToListAsync();
-            var detalleComprasDTO = mapper.Map<List<DetalleCompraDTO>>(detalleCompras);
+            var detalleCompras = await this.dBContext.DetalleCompras.ToListAsync();
+            var detalleComprasDTO = this.mapper.Map<List<DetalleCompraDTO>>(detalleCompras);
             return detalleComprasDTO;
         }
 
@@ -36,12 +36,12 @@ namespace InventarioAPI.Controllers
         [HttpGet("{id}", Name = "GetDetalleCompra")]
         public async Task<ActionResult<DetalleCompraDTO>> Get(int id)
         {
-            var detalleCompras = await contexto.DetalleCompras.FirstOrDefaultAsync(x => x.IdCompra == id);
+            var detalleCompras = await this.dBContext.DetalleCompras.FirstOrDefaultAsync(x => x.IdCompra == id);
             if (detalleCompras == null)
             {
                 return NotFound();
             }
-            var detalleComprasDTO = mapper.Map<DetalleCompraDTO>(detalleCompras);
+            var detalleComprasDTO = this.mapper.Map<DetalleCompraDTO>(detalleCompras);
             return detalleComprasDTO;
         }
 
@@ -49,10 +49,10 @@ namespace InventarioAPI.Controllers
         [HttpPost]
         public async Task<ActionResult> Post([FromBody] DetalleCompraCreacionDTO detalleCreacion)//Se espera recibir un JSON o un DOC.XML
         {
-            var detalleCompras = mapper.Map<DetalleCompra>(detalleCreacion);
-            contexto.Add(detalleCompras);
-            await contexto.SaveChangesAsync();
-            var detalleComprasDTO = mapper.Map<DetalleCompraDTO>(detalleCompras);
+            var detalleCompras = this.mapper.Map<DetalleCompra>(detalleCreacion);
+            this.dBContext.Add(detalleCompras);
+            await this.dBContext.SaveChangesAsync();
+            var detalleComprasDTO = this.mapper.Map<DetalleCompraDTO>(detalleCompras);
             return new CreatedAtRouteResult("GetDetalleCompra", new { id = detalleCompras.IdCompra }, detalleCompras);
         }
 
@@ -60,10 +60,10 @@ namespace InventarioAPI.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult> Put(int id, [FromBody] DetalleCompraCreacionDTO detalleCompraActualizacion)
         {
-            var detalleCompras = mapper.Map<DetalleCompra>(detalleCompraActualizacion);
+            var detalleCompras = this.mapper.Map<DetalleCompra>(detalleCompraActualizacion);
             detalleCompras.IdCompra = id;
-            contexto.Entry(detalleCompras).State = EntityState.Modified;
-            await contexto.SaveChangesAsync();
+            this.dBContext.Entry(detalleCompras).State = EntityState.Modified;
+            await this.dBContext.SaveChangesAsync();
             return NoContent();
         }
 
@@ -71,14 +71,14 @@ namespace InventarioAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<DetalleCompraDTO>> Delete(int id)
         {
-            var detalleCompras = await contexto.DetalleCompras.Select(x => x.IdDetalle)
+            var detalleCompras = await this.dBContext.DetalleCompras.Select(x => x.IdDetalle)
                 .FirstOrDefaultAsync(x => x == id);
             if (detalleCompras == default(int))
             {
                 return NotFound();
             }
-            contexto.Remove(new DetalleCompra { IdDetalle = id });
-            await contexto.SaveChangesAsync();
+            this.dBContext.Remove(new DetalleCompra { IdDetalle = id });
+            await this.dBContext.SaveChangesAsync();
             return NoContent();
         }
     }
